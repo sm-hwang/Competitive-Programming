@@ -1,21 +1,23 @@
-# Binary Heap implementation in python
-# Has extra functions: deleteKey and updateKey
+import collections, random
+# heap implementation with UpdateKey(index, newKey) (allows heap element at index to be updated)
+# heap implementation with DeleteKey(index), deletes max heap elements ata a certain index
 
+# Will throw errors for itself?
 class Binary_Heap:
 
     def __init__(self, initializer):
         self.h = [0]
         self.h.extend(initializer)
+        print("self.h: %s" %str(self.h))
         self._buildMaxHeap()
-
+    
     def _buildMaxHeap(self):
-        print("in _buildMaxHeap")
         for i in reversed(range(1, len(self.h))):
             self._heapify(i, len(self.h))
 
     def getMax(self):
-        return self.h[1]
-    
+        return self.h[1] 
+
     def popMax(self):
         self.h[1], self.h[-1] = self.h[-1], self.h[1]
         maxVal = self.h.pop()
@@ -24,36 +26,33 @@ class Binary_Heap:
 
     # h[idx] will "go down" the heap to its place (with location > bound) to maintain the heap property
     def _heapify(self, idx, bound):
-        print("in _heapify")
         # won't need if I know when the leaves start
         if 2 * idx >= bound:
-            return
-
-        lc = 2 * idx
-        rc = lc + 1
+            return 
+    
         swp_idx = 0
         while 2 * idx < bound:
-            if rc >= len(self.h):
+            lc = 2 * idx
+            rc = lc + 1
+            if rc >= bound:
                 swp_idx = lc
             else:
                 swp_idx = lc if self.h[lc] > self.h[rc] else rc
-
             if self.h[swp_idx] > self.h[idx]:
                 self.h[swp_idx], self.h[idx] = self.h[idx], self.h[swp_idx]
                 idx = swp_idx
             else:
                 break
-
-
+            
     # h[idx] will "go up" the heap to its place (with location > bound) to maintain the heap property
     def _heapify_reverse(self, idx, bound):
         # won't need if I know when the leaves start
         if idx // 2 <= bound:
-            return
+            return 
 
-        parent = idx // 2
         swp_idx = 0
         while idx // 2 > bound:
+            parent = idx // 2
             if self.h[parent] < self.h[idx]:
                 self.h[parent], self.h[idx] = self.h[idx], self.h[parent]
                 idx = parent
@@ -65,7 +64,7 @@ class Binary_Heap:
         self.h[-1], self.h[idx] = self.h[idx], self.h[-1]
         self.h.pop()
         self._heapify(idx, len(self.h))
-
+            
     def updateKey(self, idx, new_key):
         # need some sort of interface
         old_key, self.h[idx] = self.h[idx], new_key
@@ -81,6 +80,8 @@ class Binary_Heap:
             self._heapify(1, len(self.h) - i)
 
     def __repr__(self):
-        print("in __repr__")
         a, *b = self.h
-        return '[' + ', '.join(b) + ']'
+        return '[' + ', '.join(map(str,b)) + ']'
+
+    def __len__(self):
+        return len(self.h) - 1
