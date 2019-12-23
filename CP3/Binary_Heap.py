@@ -4,12 +4,15 @@ class Binary_Heap:
     def __init__(self, initializer):
         self.h = [0]
         self.h.extend(initializer)
-        print("self.h: %s" %str(self.h))
         self._buildMaxHeap()
     
     def _buildMaxHeap(self):
         for i in reversed(range(1, len(self.h))):
             self._heapify(i, len(self.h))
+
+    def insert(self, new_el):
+        self.h.append(new_el)
+        self._heapify_reverse(len(self.h) - 1, 0)
 
     def getMax(self):
         return self.h[1] 
@@ -64,6 +67,7 @@ class Binary_Heap:
     def updateKey(self, idx, new_key):
         # need some sort of interface
         old_key, self.h[idx] = self.h[idx], new_key
+        print(old_key)
         if new_key > old_key:
             self._heapify_reverse(idx, 0)
         else:
