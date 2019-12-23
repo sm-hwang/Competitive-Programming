@@ -1,4 +1,5 @@
-# Will throw errors for itself?
+# Max Binary_Heap Implementation
+# Has functions deleteKey and updateKey
 class Binary_Heap:
 
     def __init__(self, initializer):
@@ -57,15 +58,16 @@ class Binary_Heap:
                 idx = parent
             else:
                 break
-
+    
+    # Deletes key at idx (1 based)
     def deleteKey(self, idx):
         #if 0 < idx < len(self.h):
         self.h[-1], self.h[idx] = self.h[idx], self.h[-1]
         self.h.pop()
         self._heapify(idx, len(self.h))
-            
+    
+    # Updates key at idx (1 based)
     def updateKey(self, idx, new_key):
-        # need some sort of interface
         old_key, self.h[idx] = self.h[idx], new_key
         print(old_key)
         if new_key > old_key:
