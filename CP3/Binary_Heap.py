@@ -1,7 +1,3 @@
-import collections, random
-# heap implementation with UpdateKey(index, newKey) (allows heap element at index to be updated)
-# heap implementation with DeleteKey(index), deletes max heap elements ata a certain index
-
 # Will throw errors for itself?
 class Binary_Heap:
 
@@ -76,8 +72,8 @@ class Binary_Heap:
     # Sorts h
     def heapSort(self):
         for i in range(1, len(self.h)):
-            self.h[1], self.h[-1] = self.h[-1], self.h[1]
-            self._heapify(1, len(self.h) - i)
+            self.h[1], self.h[-i] = self.h[-i], self.h[1]
+            self._heapify(1, len(self.h) - i - 1)
 
     def __repr__(self):
         a, *b = self.h
