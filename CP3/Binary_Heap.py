@@ -8,7 +8,9 @@ class Binary_Heap:
         self._buildMaxHeap()
     
     def _buildMaxHeap(self):
-        for i in reversed(range(1, len(self.h))):
+        # last non-leaf node is at n//2 - 1 if 0-based index, so
+        # for 1-based is n//2 
+        for i in reversed(range(1, len(self.h)//2 + 1)):
             self._heapify(i, len(self.h))
 
     def insert(self, new_el):
@@ -76,6 +78,7 @@ class Binary_Heap:
             self._heapify(idx, len(self.h))
 
     # Sorts h
+    # Still has bugs
     def heapSort(self):
         for i in range(1, len(self.h)):
             self.h[1], self.h[-i] = self.h[-i], self.h[1]
