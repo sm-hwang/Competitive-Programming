@@ -77,11 +77,10 @@ class Binary_Heap:
             self._heapify(idx, len(self._h))
 
     # Sorts h if self._compare == operator.gt
-    # Still buggy
     def heapSort(self):
         for i in range(1, len(self._h)):
             self._h[1], self._h[-i] = self._h[-i], self._h[1]
-            self._heapify(1, len(self._h) - i - 1)
+            self._heapify(1, len(self._h) - i)
 
     def __repr__(self):
         a, *b = self._h
