@@ -4,9 +4,9 @@ import operator
 # if self.compare = operator.lt, is min heap
 class Binary_Heap:
 
-    def __init__(self, initializer=(), compare=operator.gt):
+    def __init__(self, initializer=(), isMax=True):
         self._h = [None] 
-        self._compare = compare
+        self._compare = operator.gt if isMax else operator.lt
         self._h.extend(initializer)
         self._buildHeap()
     
