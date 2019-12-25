@@ -1,8 +1,9 @@
 
-# a = [18, 17, 13, 19, 15, 11, 20]
-# b = [0 , 1 , 2 , 3 , 4 , 5 , 6 ]
+a = [18, 17, 13, 19, 15, 11, 20]
+b = [0 , 1 , 2 , 3 , 4 , 5 , 6 ]
 
-# Currently for RMQ
+# For RMQ
+
 class SegmentTree: 
 
     def __init__(self, A):
@@ -41,6 +42,21 @@ class SegmentTree:
     def rmq(self, i, j):
         return self._rmq(1, 0, self._n - 1, i, j)
 
-    def update(self, el, i):
-        pass
 
+    def update(self, el, i):
+        self._update(i, el, 1, 0, self._n - 1)
+
+
+    def _update(self, i, el, p, L, R):
+        mid = (L + R) // 2
+        #if i == mid:
+        if L == R:
+            self._A[i] = el
+        else:
+            if i <= mid:
+                self._update(i, el, 2 * p, L, mid)
+            else:
+                self._update(i, el, 2 * p + 1, mid + 1, R)
+            a = self._A[self._st[2 * p]]
+            b = self._A[self._st[2 * p + 1]]
+            self._st[p] = self._st[2 * p] if self._A[self._st[2 * p]] <= self._A[self._st[2 * p + 1]] else self._st[2 * p + 1]
