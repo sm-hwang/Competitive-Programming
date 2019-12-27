@@ -2,8 +2,7 @@
 a = [18, 17, 13, 19, 15, 11, 20]
 b = [0 , 1 , 2 , 3 , 4 , 5 , 6 ]
 
-# For RMQ
-
+# Can do range minimum query (get index of minimum element in a range)
 class SegmentTree: 
 
     def __init__(self, A):
@@ -60,3 +59,56 @@ class SegmentTree:
             a = self._A[self._st[2 * p]]
             b = self._A[self._st[2 * p + 1]]
             self._st[p] = self._st[2 * p] if self._A[self._st[2 * p]] <= self._A[self._st[2 * p + 1]] else self._st[2 * p + 1]
+
+# Can do range sum query
+class SegmentTree: 
+
+    def __init__(self, A):
+        self._A = A
+        self._n = len(A)
+        self._st = [0] * (4 * self._n)
+        self._build(1, 0, self._n - 1)
+
+    def _build(self, p, L, R):
+        if L == R:
+            self._st[p] = self._A[L]
+        else:
+            mid = (L + R) // 2
+            self._build(2 * p, L, mid)
+            self._build(2 * p + 1, mid + 1, R)
+
+            self._st[p] = self._st[2 * p] + self._st[2 * p + 1]
+
+    def _rsq(self, p, L, R, i, j):
+        if R < L:
+            print("hello")
+        mid = (L + R) // 2
+        if L == i and R == j:
+            return self._st[p]
+        elif L <= i and j <= mid:
+            return self._rsq(2 * p, L, mid, i, j)
+        elif mid + 1 <= i and j <= R:
+            return self._rsq(2 * p + 1, mid + 1, R, i, j)
+        else:
+            return self._rsq(2 * p, L, mid, i, j) + self._rsq(2 * p + 1, mid + 1, R, i, j)
+
+
+    def rsq(self, i, j):
+        return self._rsq(1, 0, self._n - 1, i, j)
+
+
+    def update(self, el, i):
+        self._A[i] = el
+        self._update(i, el, 1, 0, self._n - 1)
+
+
+    def _update(self, i, el, p, L, R):
+        mid = (L + R) // 2
+        if L == R:
+            self._st[p] = el
+        else:
+            if i <= mid:
+                self._update(i, el, 2 * p, L, mid)
+            else:
+                self._update(i, el, 2 * p + 1, mid + 1, R)
+            self._st[p] = self._st[2 * p] + self._st[2 * p + 1]
