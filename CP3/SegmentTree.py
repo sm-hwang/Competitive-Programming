@@ -60,6 +60,28 @@ class SegmentTree:
             b = self._A[self._st[2 * p + 1]]
             self._st[p] = self._st[2 * p] if self._A[self._st[2 * p]] <= self._A[self._st[2 * p + 1]] else self._st[2 * p + 1]
 
+    # Change A[i, j+1] to common value (el)
+    # not tested 
+    def rangeUpdate(self, el, i, j):
+        self._rangeUpdate(1, el, i, j, 0, self._n - 1)
+
+    def _rangeUpdate(self, p, el, i, j, L, R):
+        mid = (L + R) // 2
+        if i == j:
+            self._A[i] = el
+        elif L <= i and j <= mid:
+            self.__rangeUpdate(2 * p, el, i, j, L, mid)
+            self._st[p] = self._st[p] if self._A[self._st[p]] <= el else i
+        elif mid + 1 <= i and j <= R:
+            self.__rangeUpdate(2 * p + 1, el, i, j, mid + 1, R)
+            self._st[p] = self._st[p] if self._A[self._st[p]] <= el else i
+        elif i <= mid and mid + 1 <= j:
+            self.__rangeUpdate(2 * p, el, i, mid, L, mid)
+            self.__rangeUpdate(2 * p + 1, el, mid + 1, j, mid + 1, R)
+            self._st[p] = self._st[p] if self._A[self._st[p]] <= el else i
+        else:
+            print("this case shouldn't occur?")
+            
 # Can do range sum query
 class SegmentTree: 
 
