@@ -70,14 +70,14 @@ class SegmentTree:
         if i == j:
             self._A[i] = el
         elif L <= i and j <= mid:
-            self.__rangeUpdate(2 * p, el, i, j, L, mid)
+            self._rangeUpdate(2 * p, el, i, j, L, mid)
             self._st[p] = self._st[p] if self._A[self._st[p]] <= el else i
         elif mid + 1 <= i and j <= R:
-            self.__rangeUpdate(2 * p + 1, el, i, j, mid + 1, R)
+            self._rangeUpdate(2 * p + 1, el, i, j, mid + 1, R)
             self._st[p] = self._st[p] if self._A[self._st[p]] <= el else i
         elif i <= mid and mid + 1 <= j:
-            self.__rangeUpdate(2 * p, el, i, mid, L, mid)
-            self.__rangeUpdate(2 * p + 1, el, mid + 1, j, mid + 1, R)
+            self._rangeUpdate(2 * p, el, i, mid, L, mid)
+            self._rangeUpdate(2 * p + 1, el, mid + 1, j, mid + 1, R)
             self._st[p] = self._st[p] if self._A[self._st[p]] <= el else i
         else:
             print("this case shouldn't occur?")
