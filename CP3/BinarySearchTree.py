@@ -1,4 +1,5 @@
 # Mostly from CLRS 3rd Ed
+# Might change to make methods take "key" instead of "node"
 
 class Node:
     
@@ -110,3 +111,15 @@ class BinarySearchTree:
     
     def _getSize(self, node):
         return node.size if node else 0
+
+    # Should take as input "key" instead of node?
+    def index(self, node):
+        tree, count = self.root, 0
+        while tree and tree.key != node.key:
+            if node.key < tree.key:
+                tree = tree.left
+            else:
+                count += self._getSize(tree.left) + 1
+                tree = tree.right
+        # Will give nonsense answer if node.key not found in this tree
+        return self._getSize(tree.left) + count
