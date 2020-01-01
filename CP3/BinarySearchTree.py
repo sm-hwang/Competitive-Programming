@@ -1,9 +1,28 @@
+# Mostly from CLRS 3rd Ed
+
+class Node:
+    
+    def __init__(self, key, left=None, right=None, data=None):
+        self.key, self.left, self.right = key, left, right
+        self.parent, self.data = None, data
+
 
 class BinarySearchTree:
 
-    def __init__(self):
-        self.root = None
-        # build method missing
+    def __init__(self, initializer, key=lambda x: x):
+        
+        def build(left, right): 
+            if left == right:
+                return Node(key(contents[left]))
+            elif left < right:
+                mid = (left + right) // 2
+                ret_node = Node(key(contents[mid]))
+                ret_node.left = build(left, mid - 1)
+                ret_node.right = build(mid + 1, right) 
+                return ret_node
+            
+        contents = sorted(initializer, key=key)
+        self.root = build(0, len(contents) - 1)
 
     def search(k):
         node = self.root
@@ -55,3 +74,19 @@ class BinarySearchTree:
             y.left = z
         else:
             y.right = z
+
+
+    def delete(self, node):
+        if not node.left:
+            self.transplant(node, node.right) 
+        elif not node.right:
+            self.transplant(node, node.left) 
+        else:
+            y = self.minimum(node.right)
+            if y.parent is not node:
+                self.transplant(y, y.right)
+                y.right = node.right
+                y.right.parent = y
+            self.transplant(node, y)
+            y.left = node.left
+            y.left.parent = y
