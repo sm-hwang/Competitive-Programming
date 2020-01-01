@@ -4,7 +4,7 @@ class Node:
     
     def __init__(self, key, left=None, right=None, data=None):
         self.key, self.left, self.right = key, left, right
-        self.parent, self.data = None, data
+        self.parent, self.data, self.size = None, data, 1
 
 
 class BinarySearchTree:
@@ -13,16 +13,18 @@ class BinarySearchTree:
         
         def build(left, right): 
             if left == right:
-                return Node(key(contents[left]))
+                ret_node, size = Node(key(contents[left])), 1
             elif left < right:
                 mid = (left + right) // 2
                 ret_node = Node(key(contents[mid]))
-                ret_node.left = build(left, mid - 1)
-                ret_node.right = build(mid + 1, right) 
-                return ret_node
-            
+                ret_node.left, left_size = build(left, mid - 1)
+                ret_node.right, right_size = build(mid + 1, right)
+                ret_node.size = size = 1 + left_count + right_count
+            return ret_node, size
+        
+        # O(nlogn) build time for a minimum height Binary Search Tree
         contents = sorted(initializer, key=key)
-        self.root = build(0, len(contents) - 1)
+        self.root, _ = build(0, len(contents) - 1)
 
     def search(k):
         node = self.root
@@ -90,3 +92,21 @@ class BinarySearchTree:
             self.transplant(node, y)
             y.left = node.left
             y.left.parent = y
+            
+    # Get (i + 1)th element of inorder traversal
+    # From Elements of Programming Interviews (Python)
+    def __getitem__(self, i):
+        i, node = i + 1, self.root
+        while node:
+            left_size = self._getSize(node.left)
+            if left_size + 1 < i:
+                i -= left_size + 1
+                node = node.right
+            elif left_size == i - 1:
+                break
+            else:
+                node = node.left
+        return node
+    
+    def _getSize(self, node):
+        return node.size if node else 0
