@@ -123,3 +123,10 @@ class BinarySearchTree:
                 tree = tree.right
         # Will give nonsense answer if node.key not found in this tree
         return self._getSize(tree.left) + count
+    
+    def index_node(self, node):
+        left_size, count = self._getSize(node.left), 0
+        while node.parent and node is node.parent.right: 
+            node = node.parent
+            count += self._getSize(node)
+        return left_size + count
