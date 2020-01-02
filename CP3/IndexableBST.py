@@ -1,5 +1,7 @@
 # Mostly from CLRS 3rd Ed
 # Might change to make methods take "key" instead of "node"
+# For indexing to work correctly, keys MUST be unique
+# index() has been tested
 
 class Node:
     
@@ -15,10 +17,10 @@ class BinarySearchTree:
         def build(left, right): 
             ret_node, count = None, 0
             if left == right:
-                ret_node, count =  Node(contents[left]), 1
+                ret_node, count =  Node(key(contents[left])), 1
             elif left < right:
                 mid = (left + right) // 2
-                ret_node = Node(contents[mid])
+                ret_node = Node(key(contents[mid]))
                 ret_node.left, leftCount = build(left, mid - 1)
                 ret_node.right, rightCount = build(mid + 1, right) 
                 ret_node.size = count = 1 + leftCount + rightCount
