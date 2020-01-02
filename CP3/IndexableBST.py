@@ -13,15 +13,20 @@ class BinarySearchTree:
     def __init__(self, initializer, key=lambda x: x):
         
         def build(left, right): 
+            ret_node, count = None, 0
             if left == right:
-                ret_node, size = Node(key(contents[left])), 1
+                ret_node, count =  Node(contents[left]), 1
             elif left < right:
                 mid = (left + right) // 2
-                ret_node = Node(key(contents[mid]))
-                ret_node.left, left_size = build(left, mid - 1)
-                ret_node.right, right_size = build(mid + 1, right)
-                ret_node.size = size = 1 + left_count + right_count
-            return ret_node, size
+                ret_node = Node(contents[mid])
+                ret_node.left, leftCount = build(left, mid - 1)
+                ret_node.right, rightCount = build(mid + 1, right) 
+                ret_node.size = count = 1 + leftCount + rightCount
+                if ret_node.left:
+                    ret_node.left.parent = ret_node
+                if ret_node.right:
+                    ret_node.right.parent = ret_node
+            return ret_node, count
         
         # O(nlogn) build time for a minimum height Binary Search Tree
         contents = sorted(initializer, key=key)
@@ -78,6 +83,8 @@ class BinarySearchTree:
         else:
             y.right, y.size = node, y.size + node.size
 
+    # Changed from CLRS to remove u's reference to parent 
+    # To make size calculation with delete correct
     def transplant(self, u, v):
         u_size, v_size = self._getSize(u), self._getSize(v)
         if not u.parent:
@@ -91,12 +98,11 @@ class BinarySearchTree:
         if v:
             if v.parent:
                 v.parent.size -= v_size
-            v.parent = u.parent
+            v.parent, u.parent = u.parent, None
 
     def delete(self, node):
         if not node.left:
-            self.
-            (node, node.right) 
+            self.transplant(node, node.right) 
         elif not node.right:
             self.transplant(node, node.left) 
         else:
@@ -105,9 +111,11 @@ class BinarySearchTree:
                 self.transplant(y, y.right)
                 y.right = node.right
                 y.right.parent = y
+                y.size += self._getSize(y.right)
             self.transplant(node, y)
             y.left = node.left
             y.left.parent = y
+            y.size += self._getSize(y.left)
             
     # Get (i + 1)th element of inorder traversal
     # From Elements of Programming Interviews (Python)
