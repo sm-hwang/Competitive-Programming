@@ -69,14 +69,23 @@ class BinarySearchTree:
                 x = x.left
             else:
                 x = x.right
-        node.p = y
+        node.parent = y
         if y is None:
-            self.root = z
+            self.root = node
         elif node.key < y.key:
-            y.left = z
+            y.left = node
         else:
-            y.right = z
+            y.right = node
 
+    def transplant(self, u, v):
+        if not u.parent:
+            self.root = v
+        elif u is u.parent.left:
+            u.parent.left = v
+        else:
+            u.parent.right = v
+        if v:
+            v.parent = u.parent
 
     def delete(self, node):
         if not node.left:
