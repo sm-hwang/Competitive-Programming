@@ -69,10 +69,12 @@ class BinarySearchTree:
             node = node.parent
         return node.parent
 
-    def insert(node):
+    # node must have a unique key
+    def insert(self, node):
         y, x = None, self.root
         while x:
             y = x
+            x.size += node.size     # Update the size as we go down the tree (needs keys to be unique to work)
             if node.key < x.key:
                 x = x.left
             else:
@@ -81,9 +83,9 @@ class BinarySearchTree:
         if y is None:
             self.root = node
         elif node.key < y.key:
-            y.left, y.size = node, y.size + node.size
+            y.left = node
         else:
-            y.right, y.size = node, y.size + node.size
+            y.right = node
 
     # Changed from CLRS to remove u's reference to parent 
     # To make size calculation with delete correct
@@ -93,16 +95,22 @@ class BinarySearchTree:
             self.root = v
         elif u is u.parent.left:
             u.parent.left = v
-            u.parent.size += v_size - u_size
         else:
-            u.parent.left = v
-            u.parent.size += v_size - u_size
+            u.parent.right = v
         if v:
-            if v.parent:
-                v.parent.size -= v_size
-            v.parent, u.parent = u.parent, None
+            v.parent = u.parent
+            u.parent = None
+        self.propagate(v)
+        
+    # Propagate size changes up the BST
+    def propagate(self, node):
+        while node:
+            node.size = self._getSize(node.left) + self._getSize(node.right) + 1   
+            node = node.parent
 
-    def delete(self, node):
+    # Currently does not work
+    def delete(self, key):
+        node = self.search(key)
         if not node.left:
             self.transplant(node, node.right) 
         elif not node.right:
@@ -113,14 +121,14 @@ class BinarySearchTree:
                 self.transplant(y, y.right)
                 y.right = node.right
                 y.right.parent = y
-                y.size += self._getSize(y.right)
             self.transplant(node, y)
             y.left = node.left
             y.left.parent = y
-            y.size += self._getSize(y.left)
+            self.propagate(y)
             
     # Get (i + 1)th element of inorder traversal
     # From Elements of Programming Interviews (Python)
+    # Sufficiently tested, works with insert() but not delete()
     def __getitem__(self, i):
         i, node = i + 1, self.root
         while node:
@@ -138,7 +146,9 @@ class BinarySearchTree:
         return node.size if node else 0
 
     # Should take as input "key" instead of node?
-    def index(self, node):
+    # Sufficiently tested, works with insert() but not delete()
+    def index(self, key):
+        node = self.search(key)
         tree, count = self.root, 0
         while tree and tree.key != node.key:
             if node.key < tree.key:
