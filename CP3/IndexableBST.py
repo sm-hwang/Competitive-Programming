@@ -1,13 +1,38 @@
 # Mostly from CLRS 3rd Ed
-# Might change to make methods take "key" instead of "node"
 # For indexing to work correctly, keys MUST be unique
-# index() has been tested
+# Everything has been tested, except index_node()
 
 class Node:
     
     def __init__(self, key, left=None, right=None, data=None):
         self.key, self.left, self.right = key, left, right
         self.parent, self.data, self.size = None, data, 1
+        
+    # Methods to automatically update parent/size
+    def add_right(self, key=None, node=None):
+        if node:
+            self.right = node
+            self._propagate(self)
+        elif key is not None:
+            self.right = Node(key)
+            self._propagate(self)
+
+    def add_left(self, key=None, node=None):
+        if node:
+            self.left = node
+            self._propagate(self)
+        elif key is not None:
+            self.left = Node(key)
+            self._propagate(self)
+
+    # Overlaps with BST methods, not good?
+    def _propagate(self, node):
+        while node:
+            node.size = self._getSize(node.left) + self._getSize(node.right) + 1
+            node = node.parent
+
+    def _getSize(self, node):
+        return node.size if node else 0
 
 
 class BinarySearchTree:
@@ -17,10 +42,10 @@ class BinarySearchTree:
         def build(left, right): 
             ret_node, count = None, 0
             if left == right:
-                ret_node, count =  Node(key(contents[left])), 1
+                ret_node, count =  Node(contents[left]), 1
             elif left < right:
                 mid = (left + right) // 2
-                ret_node = Node(key(contents[mid]))
+                ret_node = Node(contents[mid])
                 ret_node.left, leftCount = build(left, mid - 1)
                 ret_node.right, rightCount = build(mid + 1, right) 
                 ret_node.size = count = 1 + leftCount + rightCount
@@ -29,13 +54,14 @@ class BinarySearchTree:
                 if ret_node.right:
                     ret_node.right.parent = ret_node
             return ret_node, count
-        
-        # O(nlogn) build time for a minimum height Binary Search Tree
+            
+        # O(nlogn) to build BST using this method
+        self.root = None
         if initializer:
             contents = sorted(initializer, key=key)
             self.root, _ = build(0, len(contents) - 1)
 
-    def search(k):
+    def search(self, k):
         node = self.root
         while node and node.key != k:
             if k < node.key:
@@ -44,26 +70,26 @@ class BinarySearchTree:
                 node = node.right
         return node
 
-    def minimum(node=None):
+    def minimum(self, node=None):
         node = self.root if node is None else node
         while node.left:
             node = node.left
         return node
 
-    def maximum(node=None):
+    def maximum(self, node=None):
         node = self.root if node is None else node
         while node.right:
             node = node.right
         return node
 
-    def successor(node):
+    def successor(self, node):
         if node.right:
             return self.minimum(node.right)
         while node.parent and node is node.parent.right:
              node = node.parent
         return node.parent
             
-    def predessor(node):
+    def predessor(self, node):
         if node.left:
             return self.maximum(node.left)
         while node.parent and node is node.parent.left:
@@ -75,7 +101,7 @@ class BinarySearchTree:
         y, x = None, self.root
         while x:
             y = x
-            x.size += node.size     # Update the size as we go down the tree (needs keys to be unique to work)
+            x.size += node.size     #
             if node.key < x.key:
                 x = x.left
             else:
@@ -88,10 +114,7 @@ class BinarySearchTree:
         else:
             y.right = node
 
-    # Changed from CLRS to remove u's reference to parent 
-    # To make size calculation with delete correct
     def transplant(self, u, v):
-        u_size, v_size = self._getSize(u), self._getSize(v)
         if not u.parent:
             self.root = v
         elif u is u.parent.left:
@@ -100,17 +123,14 @@ class BinarySearchTree:
             u.parent.right = v
         self._propagate(u.parent)
         if v:
-            v.parent = u.parent
-            u.parent = None
-        
-        
+            v.parent, u.parent = u.parent, None
+
     # Propagate size changes up the BST
     def _propagate(self, node):
         while node:
             node.size = self._getSize(node.left) + self._getSize(node.right) + 1   
             node = node.parent
 
-    # Currently does not work
     def delete(self, key):
         node = self.search(key)
         if not node.left:
@@ -127,10 +147,8 @@ class BinarySearchTree:
             y.left = node.left
             y.left.parent = y
             self._propagate(y)
-            
-    # Get (i + 1)th element of inorder traversal
-    # From Elements of Programming Interviews (Python)
-    # Sufficiently tested, works with insert() but not delete()
+
+    # Gets (i + 1)th node from in order traversal 
     def __getitem__(self, i):
         i, node = i + 1, self.root
         while node:
@@ -139,28 +157,28 @@ class BinarySearchTree:
                 i -= left_size + 1
                 node = node.right
             elif left_size == i - 1:
-                break
+                return node
             else:
                 node = node.left
         return node
-    
+
     def _getSize(self, node):
         return node.size if node else 0
 
-    # Should take as input "key" instead of node?
-    # Sufficiently tested, works with insert() but not delete()
     def index(self, key):
-        node = self.search(key)
         tree, count = self.root, 0
-        while tree and tree.key != node.key:
-            if node.key < tree.key:
+        while tree and tree.key != key:
+            if key < tree.key:
                 tree = tree.left
             else:
                 count += self._getSize(tree.left) + 1
                 tree = tree.right
-        # Will give nonsense answer if node.key not found in this tree
-        return self._getSize(tree.left) + count
-    
+        # Will give nonsense answer if key not found in this tree
+        return self._getSize(tree.left) + count 
+
+    # Get index by node, won't be any good if not part of BST unlike 
+    # index()
+    # Not tested 
     def index_node(self, node):
         left_size, count = self._getSize(node.left), 0
         while node.parent and node is node.parent.right: 
