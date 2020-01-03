@@ -12,7 +12,7 @@ class Node:
 
 class BinarySearchTree:
 
-    def __init__(self, initializer, key=lambda x: x):
+    def __init__(self, initializer=None, key=lambda x: x):
         
         def build(left, right): 
             ret_node, count = None, 0
@@ -31,8 +31,9 @@ class BinarySearchTree:
             return ret_node, count
         
         # O(nlogn) build time for a minimum height Binary Search Tree
-        contents = sorted(initializer, key=key)
-        self.root, _ = build(0, len(contents) - 1)
+        if initializer:
+            contents = sorted(initializer, key=key)
+            self.root, _ = build(0, len(contents) - 1)
 
     def search(k):
         node = self.root
@@ -97,13 +98,14 @@ class BinarySearchTree:
             u.parent.left = v
         else:
             u.parent.right = v
+        self._propagate(u.parent)
         if v:
             v.parent = u.parent
             u.parent = None
-        self.propagate(v)
+        
         
     # Propagate size changes up the BST
-    def propagate(self, node):
+    def _propagate(self, node):
         while node:
             node.size = self._getSize(node.left) + self._getSize(node.right) + 1   
             node = node.parent
@@ -124,7 +126,7 @@ class BinarySearchTree:
             self.transplant(node, y)
             y.left = node.left
             y.left.parent = y
-            self.propagate(y)
+            self._propagate(y)
             
     # Get (i + 1)th element of inorder traversal
     # From Elements of Programming Interviews (Python)
