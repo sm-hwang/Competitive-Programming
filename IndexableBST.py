@@ -1,4 +1,4 @@
-# Mostly from CLRS 3rd Ed
+# Code for the basic BST is from CLRS 3rd ed
 # For indexing to work correctly, keys MUST be unique
 # Everything has been tested, except index_node()
 
