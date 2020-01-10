@@ -1,3 +1,5 @@
+# Outdated, look at Heap.py for a Binary Heap that can serve as both Max and Min heap
+
 # Max Binary_Heap Implementation
 # Has functions deleteKey and updateKey
 class Binary_Heap:
