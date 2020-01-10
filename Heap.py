@@ -1,7 +1,5 @@
 import operator
 
-# if self.compare = operator.gt, is max heap
-# if self.compare = operator.lt, is min heap
 class Binary_Heap:
 
     def __init__(self, initializer=(), isMax=True):
